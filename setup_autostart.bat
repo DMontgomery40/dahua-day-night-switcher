@@ -39,8 +39,7 @@ if %errorlevel% equ 0 (
     echo.
     echo To test it now, you can:
     echo   1. Restart your computer
-    echo   OR
-    echo   2. Run START_HERE.bat manually
+    echo   2. Run run_camera_automation.bat manually
     echo.
     echo To disable automatic startup later:
     echo   - Open Task Scheduler

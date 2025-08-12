@@ -96,8 +96,7 @@ echo Your camera automation is now configured.
 echo.
 echo To start the automation:
 echo   1. Double-click "run_camera_automation.bat"
-echo   OR
-echo   2. Set up Windows Task Scheduler to run it automatically
+echo   2. (Recommended) Run "setup_autostart.bat" to configure automatic startup at login
 echo.
 echo The automation will:
 echo   - Switch to DAY mode at sunrise
