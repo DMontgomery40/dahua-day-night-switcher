@@ -1,0 +1,6 @@
+requests==2.31.0
+pytz==2024.1
+schedule==1.2.0
+geopy==2.4.1
+timezonefinder==6.2.0
+suntime==1.2.5
