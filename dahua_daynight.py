@@ -106,7 +106,13 @@ class DahuaCameraController:
         self.auth = HTTPDigestAuth(username, password)
         self.session = requests.Session()
         self.session.auth = self.auth
-        
+        # Detect firmware once at start; useful for debugging / conditional logic
+        self.firmware_info = self._detect_firmware()
+        if self.firmware_info:
+            logger.info(f"Camera firmware: {self.firmware_info}")
+        else:
+            logger.warning("Could not determine firmware version; proceeding with default endpoints")
+
     def test_connection(self):
         """Test connection to the camera"""
         try:
@@ -122,6 +128,33 @@ class DahuaCameraController:
             logger.error(f"Connection error: {e}")
             return False
     
+    def _detect_firmware(self):
+        """Query camera for firmware/build info (best-effort)."""
+        try:
+            url = f"{self.base_url}/cgi-bin/magicBox.cgi?action=getSystemInfo"
+            resp = self.session.get(url, timeout=10)
+            if resp.status_code == 200:
+                for line in resp.text.splitlines():
+                    if "Build" in line or "Version" in line:
+                        return line.strip()
+        except Exception as exc:
+            logger.debug(f"Firmware detection failed: {exc}")
+        return None
+
+    def _try_endpoints(self, urls):
+        """Attempt a list of endpoints until one returns HTTP 200."""
+        for u in urls:
+            try:
+                r = self.session.get(u, timeout=10)
+                if r.status_code == 200:
+                    logger.debug(f"Endpoint succeeded: {u}")
+                    return True
+                else:
+                    logger.debug(f"Endpoint {u} returned {r.status_code}")
+            except Exception as exc:
+                logger.debug(f"Endpoint {u} exception: {exc}")
+        return False
+
     def get_current_profile(self):
         """Get the current video profile"""
         try:
@@ -139,46 +172,30 @@ class DahuaCameraController:
             return None
     
     def switch_to_day_mode(self):
-        """Switch camera to day mode"""
-        try:
-            # Method 1: Switch video profile
-            url = f"{self.base_url}/cgi-bin/configManager.cgi?action=setConfig&VideoInMode[0].Config[0]={DAY_PROFILE}"
-            response = self.session.get(url, timeout=10)
-            
-            # Method 2: Alternative - Set IR cut filter (if supported)
-            ir_url = f"{self.base_url}/cgi-bin/configManager.cgi?action=setConfig&VideoInOptions[0].NightOptions.SwitchMode=0"
-            self.session.get(ir_url, timeout=10)
-            
-            if response.status_code == 200:
-                logger.info("Successfully switched to DAY mode")
-                return True
-            else:
-                logger.error(f"Failed to switch to day mode: HTTP {response.status_code}")
-                return False
-        except Exception as e:
-            logger.error(f"Error switching to day mode: {e}")
-            return False
+        """Switch camera to day mode with fallback endpoints"""
+        endpoints = [
+            f"{self.base_url}/cgi-bin/configManager.cgi?action=setConfig&VideoInMode[0].Config[0]={DAY_PROFILE}",
+            f"{self.base_url}/cgi-bin/configManager.cgi?action=setConfig&VideoInOptions[0].NightOptions.SwitchMode=0",
+            f"{self.base_url}/cgi-bin/configManager.cgi?action=setConfig&Camera.Param[0].DayNightColor=1",
+        ]
+        if self._try_endpoints(endpoints):
+            logger.info("Successfully switched to DAY mode (primary/fallback endpoint)")
+            return True
+        logger.error("All DAY-mode endpoints failed")
+        return False
     
     def switch_to_night_mode(self):
-        """Switch camera to night mode"""
-        try:
-            # Method 1: Switch video profile
-            url = f"{self.base_url}/cgi-bin/configManager.cgi?action=setConfig&VideoInMode[0].Config[0]={NIGHT_PROFILE}"
-            response = self.session.get(url, timeout=10)
-            
-            # Method 2: Alternative - Set IR cut filter (if supported)
-            ir_url = f"{self.base_url}/cgi-bin/configManager.cgi?action=setConfig&VideoInOptions[0].NightOptions.SwitchMode=1"
-            self.session.get(ir_url, timeout=10)
-            
-            if response.status_code == 200:
-                logger.info("Successfully switched to NIGHT mode")
-                return True
-            else:
-                logger.error(f"Failed to switch to night mode: HTTP {response.status_code}")
-                return False
-        except Exception as e:
-            logger.error(f"Error switching to night mode: {e}")
-            return False
+        """Switch camera to night mode with fallback endpoints"""
+        endpoints = [
+            f"{self.base_url}/cgi-bin/configManager.cgi?action=setConfig&VideoInMode[0].Config[0]={NIGHT_PROFILE}",
+            f"{self.base_url}/cgi-bin/configManager.cgi?action=setConfig&VideoInOptions[0].NightOptions.SwitchMode=1",
+            f"{self.base_url}/cgi-bin/configManager.cgi?action=setConfig&Camera.Param[0].DayNightColor=2",
+        ]
+        if self._try_endpoints(endpoints):
+            logger.info("Successfully switched to NIGHT mode (primary/fallback endpoint)")
+            return True
+        logger.error("All NIGHT-mode endpoints failed")
+        return False
 
 
 def get_sun_times():
