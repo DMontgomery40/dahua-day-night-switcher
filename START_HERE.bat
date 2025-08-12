@@ -32,8 +32,62 @@ if exist camera_config.json (
 )
 
 :setup
-call setup.bat
-goto :end
+REM === Integrated setup (replaces setup.bat and setup_autostart.bat) ===
+REM 1) Ensure Python is installed
+python --version >nul 2>&1
+if %errorlevel% neq 0 (
+    echo.
+    echo ERROR: Python is not installed or not in PATH!
+    echo Please install Python from https://python.org (check "Add Python to PATH") and run this file again.
+    pause
+    exit /b 1
+)
+
+REM 2) Create and activate virtual environment if it does not already exist
+if not exist venv (
+    echo Creating Python virtual environment...
+    python -m venv venv
+)
+if exist venv\Scripts\activate.bat (
+    call venv\Scripts\activate.bat
+)
+
+REM 3) Install/upgrade required Python packages
+echo Installing required packages...
+python -m pip install --upgrade pip >nul
+pip install -r requirements.txt
+if %errorlevel% neq 0 (
+    echo.
+    echo ERROR: Failed to install required packages!
+    pause
+    exit /b 1
+)
+
+REM 4) Run interactive configuration
+python interactive_setup.py
+if %errorlevel% neq 0 (
+    echo.
+    echo ERROR: Configuration failed!
+    pause
+    exit /b 1
+)
+
+REM 5) Offer automatic startup via Task Scheduler
+choice /C YN /M "Would you like the automation to start automatically when Windows starts"
+if errorlevel 2 goto :post_setup  REM user chose N
+
+REM -- User chose Y --
+set "CURRENT_DIR=%CD%"
+REM Prepare updated XML with correct path
+powershell -Command "(gc '%CURRENT_DIR%\dahua_camera_task.xml') -replace 'C:\\DahuaCameraAutomation', '%CURRENT_DIR%' | Out-File -encoding UTF8 '%TEMP%\dahua_task_temp.xml'"
+
+schtasks /create /tn "DahuaCameraAutomation" /xml "%TEMP%\dahua_task_temp.xml" /f
+if exist "%TEMP%\dahua_task_temp.xml" del "%TEMP%\dahua_task_temp.xml"
+
+:post_setup
+REM Setup complete, run the automation now
+goto :run
+REM === End integrated setup ===
 
 :run
 call run_camera_automation.bat

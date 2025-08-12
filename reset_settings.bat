@@ -6,7 +6,7 @@ echo   Reset Camera Automation Settings
 echo ======================================
 echo.
 echo This will delete your saved camera settings.
-echo You will need to run setup again.
+echo You will need to run START_HERE.bat again.
 echo.
 
 choice /C YN /M "Are you sure you want to reset all settings"
