@@ -53,18 +53,15 @@ After setup, you have two options:
 - Keep the window open (minimize it if you want)
 
 **Option 2: Automatic Start** (Recommended)
-- Set up Windows to run it automatically at startup
-- See "Making it Run Automatically" below
+- Run `setup_autostart.bat` once to create a Windows Task Scheduler entry
+- The automation will then launch automatically every time you log in
 
 ## Making it Run Automatically
 
 To make the program start automatically when Windows starts:
 
-1. Press Windows+R
-2. Type: shell:startup
-3. Press Enter
-4. Copy run_camera_automation.bat to the folder that opens
-5. Restart your computer to test
+1. Double-click `setup_autostart.bat` and follow the prompts.
+2. That's it!  You can reboot now to test, or just run `run_camera_automation.bat` once to start immediately.
 
 ## Troubleshooting
 
@@ -87,9 +84,10 @@ To make the program start automatically when Windows starts:
 
 ## Files Included
 
-- START_HERE.bat - Main program (double-click this)
-- setup.bat - Installation helper
-- run_camera_automation.bat - Runs the automation
+- START_HERE.bat - Main launcher (double-click this)
+- setup.bat - Installs Python packages and guides first-time setup
+- setup_autostart.bat - Configures Windows to start the automation at login
+- run_camera_automation.bat - Runs the automation manually
 - Other files - Don't modify these
 
 ## Support
