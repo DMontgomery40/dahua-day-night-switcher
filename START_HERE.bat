@@ -1,7 +1,7 @@
 @echo off
 REM Easy start script for Dahua Camera Automation
 
-echo ======================================\necho   :)  Dahua Camera Automation\necho ======================================\n
+echo ======================================\necho   Dahua Camera Automation\necho ======================================\n
 echo This program will make your camera automatically
 echo switch between day and night modes based on
 echo sunrise and sunset times in your location.

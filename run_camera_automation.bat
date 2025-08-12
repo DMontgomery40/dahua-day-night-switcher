@@ -2,7 +2,7 @@
 REM Dahua Camera Day/Night Automation Runner
 REM This script runs the camera automation
 
-echo ======================================\necho   :)  Dahua Camera Automation\necho ======================================\n
+echo ======================================\necho  Dahua Camera Automation\necho ======================================\n
 echo.
 
 REM Check if configuration exists
