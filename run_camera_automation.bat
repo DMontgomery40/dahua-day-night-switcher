@@ -2,14 +2,14 @@
 REM Dahua Camera Day/Night Automation Runner
 REM This script runs the camera automation
 
-echo ======================================\necho  Dahua Camera Automation\necho ======================================\n
+echo ======================================\necho  Dahua Camera Automation \necho ======================================\n
 echo.
 
 REM Check if configuration exists
 if not exist camera_config.json (
     echo ERROR: No configuration found!
     echo.
-    echo Please run "setup.bat" first to configure your camera.
+    echo Please run "START_HERE.bat" first to configure your camera.
     echo.
     pause
     exit /b 1
@@ -40,7 +40,7 @@ if %errorlevel% neq 0 (
     echo ERROR: The automation stopped unexpectedly!
     echo Please check the log file (dahua_daynight.log) for details.
     echo.
-    echo If you need to reconfigure, run "setup.bat"
+    echo If you need to reconfigure, run "START_HERE.bat"
     echo.
     pause
 )
