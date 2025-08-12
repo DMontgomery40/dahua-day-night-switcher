@@ -2,7 +2,13 @@
 REM Reset/cleanup script for Dahua Camera Automation
 
 echo ======================================
-echo   Reset Camera Automation Settings
+|echo   _____       _                      _      
+echo  |  __ \\     | |                    | |     
+echo  | |  \\/ __ _| |__  _ __ ___   __ _ | | ___ 
+echo  | | __ / _` | '_ \\| '_ ` _ \\ / _` || |/ __|
+echo  | |_\\ \\ (_| | |_) | | | | | | (_| || |\\__ \\
+echo   \\____/ \\__,_|_.__/|_| |_| |_|\\__,_||_|\\___/
+echo        Reset Camera Automation Settings
 echo ======================================
 echo.
 echo This will delete your saved camera settings.
