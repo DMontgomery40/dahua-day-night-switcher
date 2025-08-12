@@ -1,7 +1,7 @@
 @echo off
 REM Easy start script for Dahua Camera Automation
 
-echo ======================================\necho   Dahua Camera Automation\necho ======================================\n
+echo ======================================\necho   Dahua Camera Automation\necho ======================================\n|echo ======================================\necho   Dahua Camera Automation\necho ======================================\n|echo ======================================\necho Dahua Camera Automation\necho ======================================\necho.
 echo This program will make your camera automatically
 echo switch between day and night modes based on
 echo sunrise and sunset times in your location.
@@ -18,7 +18,7 @@ if exist camera_config.json (
     echo.
     choice /C 123 /N /M "Enter your choice (1, 2, or 3): "
     
-    if errorlevel 3 exit /b 0
+    if errorlevel 3 goto :menu_exit
     if errorlevel 2 goto :setup
     if errorlevel 1 goto :run
 ) else (
@@ -91,4 +91,4 @@ call run_camera_automation.bat
 goto :end
 
 :end
-exit /b 0
+ echo.\n echo Thank you for using Dahua Camera Automation!\n echo To change settings later, run START_HERE.bat and choose option 2.\n echo.\n pause\n exit /b 0
